@@ -111,7 +111,7 @@ def updatePkg():
                     depends.append(line.split("makedepends = ")[1])
             for depend in depends:
                 print("Installing: " + depend)
-                (code, out) = runProc("sudo pacman -Syu " + depend)
+                (code, out) = runProc("sudo pacman -Syu --noconfirm --needed " + depend)
                 if code != 0:
                     throwErr("Installing " + depend + " while making " + pkgname, out)
             (code, out) = runProc("updpkgsums")
