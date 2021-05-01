@@ -84,7 +84,7 @@ def movePkg():
     files = os.listdir(".")
     tgt = ""
     for f in files:
-        if pkgn in f:
+        if pkgn in f and "pkg" in f:
             tgt = f
 
     (code, out) = runProc("mv " + tgt + " " + config["outdir"] + "/.")
