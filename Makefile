@@ -1,5 +1,6 @@
 all:
-	g++ aurtomatic.cpp -o aurtomatic
+	g++ -std=c++17 aurtomatic.cpp -o aurtomatic
 
-test: all
-	./aurtomatic
+blank: all
+	rm -rfv /home/matt/.config/aurtomatic
+	./aurtomatic foo
