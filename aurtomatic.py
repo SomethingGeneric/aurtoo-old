@@ -95,18 +95,37 @@ def movePkg():
 
 
 def updatePkg():
-    pkgn = os.getcwd()
-    (code, out) = runProc("updpkgsums")
+    pkgn = os.getcwd().split("/")[-1]
+    print("Checking depends")
+    (code,out) = runProc("curl https://aur.archlinux.org/cgit/aur.git/plain/.SRCINFO?h=" + pkgn)
     if code == 0:
-        print("Updated checksums. Making")
-        (code, out) = runProc("makepkg -f")
-        if code == 0:
-            print("Makepkg finished. Moving package to repo")
-            movePkg()
+        if not "seems to be empty" in out:
+            lines = out.split("\n")
+            depends = []
+            for line in lines:
+                if "depends" in line:
+                    depends.append(line.split("depends = ")[1])
+                elif "makedepends" in line:
+                    depends.append(line.split("makedepends = ")[1])
+            for depend in depends
+                (code,out) = runProc("sudo pacman -Syu " + depend)
+                if code != 0:
+                    throwErr("Installing " + depend + " while making " + pkgname, out)
+            (code, out) = runProc("updpkgsums")
+            if code == 0:
+                print("Updated checksums. Making")
+                (code, out) = runProc("makepkg -f")
+                if code == 0:
+                    print("Makepkg finished. Moving package to repo")
+                    movePkg()
+                else:
+                    throwErr("makepkg for " + pkgn, out)
+            else:
+                throwErr("updpkgsums for " + pkgn, out)
         else:
-            throwErr("makepkg for " + pkgn, out)
+            throwErr("Dependency checking for " + pkgn, "Seems like this isn't an aur package")
     else:
-        throwErr("updpkgsums for " + pkgn, out)
+        throwErr("Dependency checking for " + pkgn, "Seems like this isn't an aur package")
 
 
 def genRepo():
