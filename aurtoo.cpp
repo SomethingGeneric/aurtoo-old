@@ -18,7 +18,7 @@ string tgt_missing = "You didn't include a target! :(\n";
 string home = getenv("HOME");
 string user = getenv("USER");
 
-string config_dir = home + "/.config/aurtomatic/";
+string config_dir = home + "/.config/aurtoo/";
 string config_fn = "settings.conf";
 
 // Stuff loaded from config
