@@ -28,10 +28,10 @@ string repo_name = "";
 
 bool proc(const string command) {
     int code = system(command.c_str());
-    printf("Exit code: %i\n", code);
     if (code == 0) {
         return true;
     } else {
+        cout << "Exit code: " << code << "\n";
         return false;
     }
 }
@@ -246,6 +246,8 @@ bool update() {
         string tp = thing.path();
         if (fs::is_directory(tp)) {
             chdir(tp.c_str());
+
+            cout << "Checking: " << tp.erase(0,2) << "\n";
 
             bool gitp = proc("git pull > stat");
 
