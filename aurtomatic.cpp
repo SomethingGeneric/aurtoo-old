@@ -311,6 +311,16 @@ bool remove(const string target) {
     return true;
 }
 
+void listp() {
+	chdir(data_dir.c_str());
+	cout << "Installed packages: \n";
+	for (const auto & dir : fs::directory_iterator(".")) {
+		string dirn = dir.path();
+		dirn.erase(0,2);
+		cout << " - " << dirn << "\n";
+	}
+}
+
 int main(int argc, char *argv[]) {
     // This func exits on 1 if failed.
     // (it creates non-existent config)
@@ -352,12 +362,14 @@ int main(int argc, char *argv[]) {
             } else {
                 return 1;
             }
+        } else if (command == "list") {
+        	listp();
         } else {
-            // TODO: show some kind of help
             cout << "Options:\n";
             cout << " - add <package> : build <package> from AUR and add it to the custom repo\n";
             cout << " - remove <package> : remove <package> from repo and from being built in the future\n";
             cout << " - update : update all installed packages to the repo\n";
+            cout << " - list : show packages in repo\n";
         }
     }
     return 0;
