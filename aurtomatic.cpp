@@ -21,9 +21,6 @@ string user = getenv("USER");
 string config_dir = home + "/.config/aurtomatic/";
 string config_fn = "settings.conf";
 
-// Not used rn lol
-// int config_len = 3;
-
 // Stuff loaded from config
 string out_dir = "";
 string data_dir = "";
@@ -48,7 +45,7 @@ void ensure_dir(const string path) {
 void loadconfig() {
 
     if (fs::is_directory(config_dir) && fs::is_regular_file(config_dir + config_fn)) {
-        cout << "Loading config from " << config_dir + config_fn << "\n";
+        //cout << "Loading config from " << config_dir + config_fn << "\n";
 
         string line;
         string lines[3];
@@ -68,7 +65,7 @@ void loadconfig() {
             exit(1);
         }
 
-        cout << "Config lines: \n";
+        //cout << "Config lines: \n";
         for (int i = 0; i < 3; i++) {
             string thisline = lines[i];
             // cout << thisline << "\n";
@@ -357,7 +354,10 @@ int main(int argc, char *argv[]) {
             }
         } else {
             // TODO: show some kind of help
-            cout << "I'll write usage docs once I have a functional program.\n";
+            cout << "Options:\n";
+            cout << " - add <package> : build <package> from AUR and add it to the custom repo\n";
+            cout << " - remove <package> : remove <package> from repo and from being built in the future\n";
+            cout << " - update : update all installed packages to the repo\n";
         }
     }
     return 0;
