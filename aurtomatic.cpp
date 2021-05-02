@@ -167,6 +167,41 @@ bool makepkg(const string target) {
 
     cout << "Done building " << target << "\n";
 
+    vector<string> files;
+
+    for (const auto & entry : fs::directory_iterator(".")) {
+        string tp = entry.path();
+        if (tp.find(target) != string::npos && tp.find("pkg") != string::npos) {
+            files.push_back(tp);
+        }
+    }
+
+    // we shouldn't have more than one
+    fs::rename(files[0], out_dir + "/" + files[0]);
+
+    chdir("../");
+    return true;
+}
+
+bool updrepo() {
+    chdir(out_dir.c_str());
+
+    vector<string> files;
+    for (const auto & entry : fs::directory_iterator(".")) {
+        string tp = entry.path();
+        if (tp.find("tar") != string::npos && tp.find("pkg") != string::npos) {
+            files.push_back(tp);
+        }
+    }
+
+    for (const auto & pkg : files) {
+        bool code = proc("repo-add " + repo_name + ".db.tar.zst " + pkg);
+        if (!code) {
+            cout << "Failed while adding " << pkg << " to repo\n";
+            exit(1);
+        }
+    }
+
     chdir("../");
     return true;
 }
@@ -183,7 +218,12 @@ bool add(const string target) {
             // we got source
             bool done = makepkg(target);
             if (done) {
-                return true;
+                bool repo = updrepo();
+                if (repo) {
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }
@@ -224,6 +264,7 @@ int main(int argc, char *argv[]) {
                 string target = argv[2];
                 bool res = add(target);
                 if (res) {
+                    cout << "Added " << target << endl;
                     return 0;
                 } else {
                     return 1;
