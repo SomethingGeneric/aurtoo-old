@@ -4,7 +4,7 @@ import os, sys, subprocess, shutil
 
 from pathlib import Path
 
-confdir = os.path.expanduser("~/.config/pacsync")
+confdir = os.path.expanduser("~/.config/aurtomatic")
 
 action = ""
 config = {}
