@@ -1,6 +1,6 @@
 all:
 	g++ -std=c++17 aurtomatic.cpp -o aurtomatic
 
-blank: all
+reset: all
 	rm -rfv /home/matt/.config/aurtomatic
-	./aurtomatic foo
+	./aurtomatic add nofetch-git

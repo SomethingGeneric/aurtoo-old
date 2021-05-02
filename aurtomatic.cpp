@@ -20,6 +20,9 @@ string user = getenv("USER");
 string config_dir = home + "/.config/aurtomatic/";
 string config_fn = "settings.conf";
 
+// Not used rn lol
+// int config_len = 3;
+
 // Stuff loaded from config
 string out_dir = "";
 string data_dir = "";
@@ -39,10 +42,46 @@ bool loadconfig() {
 
     if (fs::is_directory(config_dir) && fs::is_regular_file(config_dir + config_fn)) {
         // pain
-        cout << "Loading config from " << config_dir << "\n";
+        cout << "Loading config from " << config_dir + config_fn << "\n";
+
+        string line;
+        string lines[3];
+
+        ifstream config;
+        config.open(config_dir + config_fn);
+
+        if (config.is_open()) {
+            int i = 0;
+            while (getline(config,line)) {
+                lines[i] = line;
+                i++;
+            }
+            config.close();
+        } else {
+            cerr << "Unable to open config file\n";
+            exit(1);
+        }
+
+        cout << "Config lines: \n";
+        for (int i = 0; i < 3; i++) {
+            string thisline = lines[i];
+            // cout << thisline << "\n";
+
+            if (thisline.find("datadir") != string::npos) {
+                data_dir = thisline.substr(thisline.find("=")+1, -1);
+                cout << "Data dir is: " << data_dir << "\n";
+            } else if (thisline.find("outdir") != string::npos) {
+                out_dir = thisline.substr(thisline.find("=")+1, -1);
+                cout << "Out dir is: " << out_dir << "\n";
+            } else if (thisline.find("repon") != string::npos) {
+                repo_name = thisline.substr(thisline.find("=")+1, -1);
+                cout << "Repo name is: " << repo_name << "\n";
+            }
+
+        }
+
     } else {
-        cout << "Seems like we haven't configured things yet.\n";
-        
+        cout << "Seems like you haven't configured things yet. Let's do that\n"; 
         // guess cpp fs standard is still WIP
         // does this still work if the dir exists? guess so
         mkdir(config_dir.c_str(), 0777);
@@ -60,14 +99,13 @@ bool loadconfig() {
         config.open(config_dir + config_fn);
         config << "datadir=" << data_dir << "\n";
         config << "outdir=" << out_dir << "\n";
-        config << "repo_name" << repo_name << "\n";
+        config << "repon=" << repo_name << "\n";
         config.close();
 
         cout << "Here are your configured settings\n";
         cout << "Package storage: " << data_dir << "\n";
         cout << "Output repo: " << out_dir << "\n";
         cout << "Repo name: " << repo_name << "\n";
-
 
     }
 
