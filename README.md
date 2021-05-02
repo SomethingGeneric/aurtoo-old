@@ -12,6 +12,9 @@ Tool to help maintain a personal repo of AUR packages
 * To add a package from the AUR, simply run `aurtoo add <package_name>`
 * For other commands, you can see `aurtoo help`
 
+## Automation note
+You can of course use a crontab or similar setup to automate `aurtoo update`, but please run `aurtoo add` manually, as you will have to authenticate with `sudo` to install depends for a package (if there are any)
+
 ## Use case
 People who have multiple Arch machines, and want to only build AUR packages once.
 By serving the `out_dir` folder via a web server, other Arch machines can be made to install the packages built by `aurtoo add`
