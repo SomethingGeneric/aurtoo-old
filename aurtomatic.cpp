@@ -86,9 +86,6 @@ void loadconfig() {
 
         }
 
-        ensure_dir(data_dir);
-        ensure_dir(out_dir);
-
     } else {
         cout << "Seems like you haven't configured things yet. Let's do that\n"; 
         // guess cpp fs standard is still WIP
@@ -117,6 +114,10 @@ void loadconfig() {
         cout << "Repo name: " << repo_name << "\n";
 
     }
+
+    ensure_dir(data_dir);
+    ensure_dir(out_dir);
+
 }
 
 bool makepkg(const string target) {
@@ -194,12 +195,16 @@ bool updrepo() {
         }
     }
 
-    for (const auto & pkg : files) {
-        bool code = proc("repo-add " + repo_name + ".db.tar.zst " + pkg);
-        if (!code) {
-            cout << "Failed while adding " << pkg << " to repo\n";
-            exit(1);
+    if (files.size() != 0) {
+        for (const auto & pkg : files) {
+            bool code = proc("repo-add " + repo_name + ".db.tar.zst " + pkg);
+            if (!code) {
+                cout << "Failed while adding " << pkg << " to repo\n";
+                exit(1);
+            }
         }
+    } else {
+        cout << "Seems like there are no packages here!!!\nThis repo will likely break since it's empty.\n";
     }
 
     chdir("../");
@@ -210,8 +215,9 @@ bool updrepo() {
 bool add(const string target) {
     chdir(data_dir.c_str());
     if (fs::is_directory(target)) {
-        cout << "Seems like we've already got " << target << ".\nDid you mean to update?\n";
-        return false;
+        cerr << "Seems like we've already got " << target << ".\nDid you mean to update?\n";
+        exit(1);
+        //return false;
     } else {
         bool clone = proc("git clone https://aur.archlinux.org/" + target + ".git");
         if (clone) {
@@ -238,6 +244,44 @@ bool add(const string target) {
 // Update all packages
 bool update() {
     chdir(data_dir.c_str());
+    
+    for (const auto & thing : fs::directory_iterator(".")) {
+        string tp = thing.path();
+        if (fs::is_directory(tp)) {
+            chdir(tp.c_str());
+
+            bool gitp = proc("git pull > stat");
+
+            if (!gitp) {
+                cerr << "Git failed while updating " << tp << "\n";
+                exit(1);
+            }
+
+            vector<string> lines;
+            string thisline;
+            ifstream stat("stat");
+            if (stat.is_open()) {
+                while (getline(stat,thisline)) {
+                    lines.push_back(thisline);
+                }
+                stat.close();
+            } else {
+                cerr << "Could not check status of " << tp;
+                exit(1);
+            }
+
+            //fs::remove("stat");
+
+            if (lines.size() == 1) {
+                cout << "Looks like this package is up to date.\n";
+                chdir("../");
+            } else {
+                cout << "Looks like this package needs an update.\n";
+                chdir("../");
+                makepkg(tp);
+            }
+        }
+    }
 
     return true;
 }
@@ -245,6 +289,27 @@ bool update() {
 // Stop serving package
 bool remove(const string target) {
     chdir(data_dir.c_str());
+    if (fs::is_directory(target)) {
+        fs::remove_all(target);
+    } else {
+        cerr << "Seems like " << target << " isn't installed?\n";
+        exit(1);
+    }
+
+    cout << "Removed the package dir for " << target << "\nChecking repo dir\n";
+
+
+    chdir(out_dir.c_str());
+    for (const auto & entry : fs::directory_iterator(".")) {
+        string tp = entry.path();
+        if (tp.find(target) != string::npos && tp.find("pkg") != string::npos) {
+            fs::remove(tp);
+        }
+    }
+
+    cout << "Verified that " << target << " is not in the repo. Updating repo db.\n";
+    updrepo();
+    cout << "Done.\n";
 
     return true;
 }
@@ -260,6 +325,7 @@ int main(int argc, char *argv[]) {
         if (command == "add") {
             if (argc != 3) {
                 cout << tgt_missing;
+                exit(1);
             } else { // this is probably even lazier than I realize
                 string target = argv[2];
                 bool res = add(target);
@@ -273,6 +339,7 @@ int main(int argc, char *argv[]) {
         } else if (command == "remove") {
             if (argc != 3) {
                 cout << tgt_missing;
+                exit(1);
             } else { // this is probably even lazier than I realize
                 string target = argv[2];
                 bool res = remove(target);
@@ -283,7 +350,11 @@ int main(int argc, char *argv[]) {
                 }
             }
         } else if (command == "update") {
-            cout << "Todo\n";
+            if (update()) {
+                return 0;
+            } else {
+                return 1;
+            }
         } else {
             // TODO: show some kind of help
             cout << "I'll write usage docs once I have a functional program.\n";
