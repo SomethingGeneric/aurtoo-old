@@ -1,9 +1,9 @@
-# aurtomatic
+# aurtoo
 Tool to help maintain a personal repo of AUR packages
 
 ## Install
-* From aur: `aurtomatic-git`
-* From source: `make && sudo mv aurtomatic /usr/bin/.`
+* From aur: `aurtoo-git`
+* From source: `make && sudo mv aurtoo /usr/bin/.`
 
 ## Usage
-(See `aurtomatic help`)
+(See `aurtoo help`)

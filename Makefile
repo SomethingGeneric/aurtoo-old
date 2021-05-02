@@ -1,8 +1,8 @@
 all:
-	g++ -std=c++17 aurtomatic.cpp -o aurtomatic
+	g++ -std=c++17 aurtoo.cpp -o aurtoo
 
 resetconf:
-	rm -rfv /home/matt/.config/aurtomatic
+	rm -rfv /home/matt/.config/aurtoo
 
 resethard:
 	rm -rfv pkgs repo
@@ -10,5 +10,5 @@ resethard:
 reset: resetconf resethard
 
 test: all resetconf resethard
-	./aurtomatic add nofetch-git
-	./aurtomatic remove nofetch-git
+	./aurtoo add nofetch-git
+	./aurtoo remove nofetch-git
