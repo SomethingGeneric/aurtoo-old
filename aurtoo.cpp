@@ -153,12 +153,18 @@ bool makepkg(const string target) {
     }
 
     for (string depend : depends) {
-        //string depend = depends[i];
-        cout << "Installing " + depend + "\n";
-        bool res = proc("sudo pacman -Sy --needed --noconfirm " + depend);
-        if (!res) {
-            cerr << "Failed to install " + depend + " with pacman.\n";
-            exit(1);
+        cout << "Checking if " << depend << " is an AUR package itself";
+        bool res = proc("curl -If https://aur.archlinux.org/packages/" + depend);
+        if (res) {
+            cout << depend << " is an AUR package.\nRecursive AUR installing is on the todo list.";
+            cout << "For now, please install it manually. (or by re-running aurtoo ;) )\n";
+        } else {
+            cout << "Installing " + depend + " with pacman, as it's not an AUR package\n";
+            bool res = proc("sudo pacman -Sy --needed --noconfirm " + depend);
+            if (!res) {
+                cerr << "Failed to install " + depend + " with pacman.\n";
+                exit(1);
+            }
         }
     }
 
