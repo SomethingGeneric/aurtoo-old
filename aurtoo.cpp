@@ -127,14 +127,23 @@ bool makepkg(const string target) {
 
     if (dependsf.is_open()) {
         while (getline(dependsf,thisline)) {
-            string dep = "depends = ";
-            string mkdep = "makedepends = ";
-            if (thisline.find(dep) != string::npos && thisline.find("optdepends =") == string::npos) {
-                string newd = thisline.erase(thisline.find(dep), dep.length());
-                depends.push_back(newd);
-            } else if (thisline.find(mkdep) != string::npos && thisline.find("optdepends =") == string::npos) {
-                string newd = thisline.erase(thisline.find(mkdep), mkdep.length());
-                depends.push_back(newd);
+            /*
+                string target = "heeho this is a test";
+                string remove = "this";
+
+                if (target.find(remove) != string::npos) {
+                    target.erase(target.find(remove), remove.length());
+                    cout << target << endl;
+                }
+            */
+
+            string remove[2] = {"makedepends = ", "depends = "};
+
+            for (string target : remove) {
+                if (thisline.find(target) != string::npos && thisline.find("optdepends") == string::npos) {
+                    thisline.erase(thisline.find(target), target.length());
+                    depends.push_back(thisline);
+                }
             }
         }
         dependsf.close();
