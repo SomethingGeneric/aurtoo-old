@@ -127,11 +127,13 @@ bool makepkg(const string target) {
 
     if (dependsf.is_open()) {
         while (getline(dependsf,thisline)) {
-            if (thisline.find("depends = ") != string::npos && thisline.find("optdepends =") == string::npos) {
-                string newd = thisline.erase(0,10);
+            string dep = "depends = ";
+            string mkdep = "makedepends = ";
+            if (thisline.find(dep) != string::npos && thisline.find("optdepends =") == string::npos) {
+                string newd = thisline.erase(thisline.find(dep), dep.length());
                 depends.push_back(newd);
-            } else if (thisline.find("makedepends = ") != string::npos && thisline.find("optdepends =") == string::npos) {
-                string newd = thisline.erase(0,14);
+            } else if (thisline.find(mkdep) != string::npos && thisline.find("optdepends =") == string::npos) {
+                string newd = thisline.erase(thisline.find(mkdep), mkdep.length());
                 depends.push_back(newd);
             }
         }
