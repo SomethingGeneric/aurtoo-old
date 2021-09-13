@@ -2,3 +2,7 @@ aurtoo
 a.out
 pkgs/*
 repo/*
+aurtoo/
+pkg/
+src/
+*tar*

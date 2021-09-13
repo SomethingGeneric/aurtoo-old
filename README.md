@@ -2,8 +2,7 @@
 Tool to help maintain a personal repo of AUR packages
 
 ## Install
-* From aur: `aurtoo-git`
-* From source: `make && sudo mv aurtoo /usr/bin/.`
+* From source: `makepkg -si`
 
 ## Usage
 * Once you've installed, run `aurtoo help`

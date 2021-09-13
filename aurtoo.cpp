@@ -174,7 +174,7 @@ bool makepkg(const string target) {
         exit(1);
     }
 
-    res = proc("makepkg -f");
+    res = proc("makepkg -f --sign");
     if (!res) {
         cerr << "Could not build package " << target << "\n";
         exit(1);
