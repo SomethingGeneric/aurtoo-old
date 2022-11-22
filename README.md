@@ -1,3 +1,5 @@
+# If you're interested in Aurtoo, you might want to look at the new version https://git.getcryst.al/crystal/software/malachite
+
 # aurtoo
 Tool to help maintain a personal repo of AUR packages
 
