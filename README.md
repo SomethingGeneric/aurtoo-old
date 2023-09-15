@@ -22,3 +22,7 @@ By serving the `out_dir` folder via a web server, other Arch machines can be mad
 
 ## Caveat
 Since I (the developer) run aurtoo exclusively on a server machine, aurtoo does not currently install the built package to the machine it's running on. Of course, you could simply configure the `out_dir` folder as a filesystem repo in your `pacman.conf` and then `pacman -Sy` the package after adding it via `aurtoo add`. If this is a feature that some people desire, I'd be happy to accept a PR :)
+
+
+# This project has moved:
+[GitLab Repository](https://gitlab.mattcompton.dev/matt/aurtoo-old)
